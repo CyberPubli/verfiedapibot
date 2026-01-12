@@ -1,0 +1,28 @@
+import express from "express";
+
+const app = express();
+app.use(express.json());
+
+const VERIFY_TOKEN = "mi_token_secreto";
+
+// Verificación de Meta
+app.get("/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    return res.status(200).send(challenge);
+  }
+  return res.sendStatus(403);
+});
+
+// Mensajes entrantes
+app.post("/webhook", (req, res) => {
+  console.log("EVENTO:", JSON.stringify(req.body, null, 2));
+  res.sendStatus(200);
+});
+
+app.listen(3000, () => {
+  console.log("Webhook activo en puerto 3000");
+});
