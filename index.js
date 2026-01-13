@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 
 const app = express();
 app.use(express.json());
@@ -18,20 +18,24 @@ app.get("/webhook", (req, res) => {
     return res.status(200).send(challenge);
   }
 
-  console.log("Falló verificación");
+  console.log("Falló verificación de webhook");
   return res.sendStatus(403);
 });
 
 // ==============================
-// Eventos entrantes
+// Eventos entrantes de WhatsApp
 // ==============================
 app.post("/webhook", (req, res) => {
-  console.log("EVENTO:", JSON.stringify(req.body, null, 2));
+  console.log("EVENTO RECIBIDO:");
+  console.log(JSON.stringify(req.body, null, 2));
   res.sendStatus(200);
 });
 
 // ==============================
+// Inicio del servidor (Railway)
+// ==============================
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log("Webhook activo en puerto", PORT);
+  console.log(`Webhook activo en puerto ${PORT}`);
 });
