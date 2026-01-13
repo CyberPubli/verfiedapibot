@@ -5,24 +5,37 @@ app.use(express.json());
 
 const VERIFY_TOKEN = "mi_token_secreto";
 
-// Verificación de Meta
+// ==============================
+// Verificación de Webhook (Meta)
+// ==============================
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
 
   if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    console.log("Webhook verificado correctamente");
     return res.status(200).send(challenge);
   }
+
+  console.log("Falló verificación de webhook");
   return res.sendStatus(403);
 });
 
-// Mensajes entrantes
+// ==============================
+// Eventos entrantes de WhatsApp
+// ==============================
 app.post("/webhook", (req, res) => {
-  console.log("EVENTO:", JSON.stringify(req.body, null, 2));
+  console.log("EVENTO RECIBIDO:");
+  console.log(JSON.stringify(req.body, null, 2));
   res.sendStatus(200);
 });
 
-app.listen(3000, () => {
-  console.log("Webhook activo en puerto 3000");
+// ==============================
+// Inicio del servidor (Railway)
+// ==============================
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Webhook activo en puerto ${PORT}`);
 });
